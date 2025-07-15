@@ -1,0 +1,29 @@
+- name: Create a directory for roboshop user
+  ansible.builtin.file:
+    path: /app
+    state: directory
+
+- name: Add application User
+  ansible.builtin.user:
+    name: roboshop
+    system: true
+    home: /app
+    # create_home: no
+    shell: /sbin/nologin
+
+# - name: Set user home directory
+#   user:
+#     name: "{{ username }}"
+#     # home: /home/{{ username }}  ---> this is the normal way to give a directory to the user.
+#     home: /app
+
+- name: Download the application code to created app directory.
+  ansible.builtin.get_url:
+    url: https://roboshop-artifacts.s3.amazonaws.com/{{ component }}-v3.zip
+    dest: /tmp/{{ component }}.zip
+
+- name: unzip the downloaded files into user app directory
+  ansible.builtin.unarchive:
+    src: /tmp/{{ component }}.zip
+    dest: /app
+    remote_src: yes

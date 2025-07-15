@@ -1,0 +1,53 @@
+- name: Disable default nginx module
+  ansible.builtin.command: dnf module disable nginx -y
+
+- name: Enable nginx version:1.24 as a default
+  ansible.builtin.command: dnf module enable nginx:1.24 -y
+
+- name: Install Nginx
+  ansible.builtin.package:
+    name: nginx
+    state: present
+
+- name: Start & Enable Nginx service
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes
+#----------------------------------------------------------
+- name: Find all files and dirs inside /usr/share/nginx/html/
+  ansible.builtin.find:
+    paths: /usr/share/nginx/html/
+    file_type: any
+    recurse: yes
+  register: files_to_delete
+
+- name: Delete all contents inside /usr/share/nginx/html/
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ files_to_delete.files }}"
+#-----------------------------------------------------------------
+
+- name: Download the frontend content
+  ansible.builtin.get_url:
+    url: https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip
+    dest: /tmp/frontend.zip
+
+- name: unzip the downloaded file
+  ansible.builtin.unarchive:
+    src: /tmp/frontend.zip
+    dest: /usr/share/nginx/html/
+    remote_src: yes
+
+- name: Remove niginx conf file (delete file)
+  ansible.builtin.file:
+    path: /etc/nginx/nginx.conf
+    state: absent
+
+- name: copy roboshop nginx conf file
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify:
+    - Restart nginx

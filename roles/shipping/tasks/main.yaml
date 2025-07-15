@@ -1,0 +1,73 @@
+- name: app setup
+  include_role:
+    name: common
+    tasks_from: app-setup
+
+- name: maven setup
+  include_role:
+    name: common
+    tasks_from: maven-setup
+
+#-----------------------------------------------------------------
+
+- name: Check if MySQL user 'shipping' exists
+  community.mysql.mysql_query:
+    login_user: "{{ MYSQL_ROOT_USER }}"
+    login_password: "{{ MYSQL_ROOT_PASSWORD }}"
+    login_host: "{{ MYSQL_HOST }}"
+    query: SELECT User FROM mysql.user WHERE User = 'shipping';
+  register: is_user_present
+
+- name: Print if shipping exists
+  debug:
+    msg: "✅ User 'shipping' exists"
+  when: is_user_present.query_result[0] | length > 0
+
+- name: Print if shipping does not exist
+  debug:
+    msg: "❌ User 'shipping' does NOT exist"
+  when: is_user_present.query_result[0] | length == 0
+
+- name: check does it able to connect 
+  community.mysql.mysql_info:
+    login_user: shipping
+    login_password: "{{ MYSQL_ROOT_PASSWORD }}"
+    login_host: "{{ MYSQL_HOST }}"
+    login_db: cities
+  register: db_connection
+  ignore_errors: yes
+
+- name: creating user in mysql db
+  tags:
+  - import_user
+  community.mysql.mysql_db:
+    name: all
+    login_user: "{{ MYSQL_ROOT_USER }}"
+    login_password: "{{ MYSQL_ROOT_PASSWORD }}"
+    login_host: "{{ MYSQL_HOST }}"
+    state: import
+    target: "{{ item }}"
+  loop:
+  - /app/db/app-user.sql
+  when: is_user_present.query_result[0] | length == 0
+
+- name: creating DB and load data
+  tags:
+  - import_DB
+  community.mysql.mysql_db:
+    name: all
+    login_user: "{{ MYSQL_ROOT_USER }}"
+    login_password: "{{ MYSQL_ROOT_PASSWORD }}"
+    login_host: "{{ MYSQL_HOST }}"
+    state: import
+    target: "{{ item }}"
+  loop:
+  - /app/db/schema.sql
+  - /app/db/master-data.sql
+  when: db_connection.failed is defined and db_connection.failed
+
+  
+- name: systemd setup
+  include_role:
+    name: common
+    tasks_from: systemd

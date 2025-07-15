@@ -1,0 +1,2 @@
+REDIS_HOST: redis.nanda.cyou
+MONGO_HOST: mongodb.nanda.cyou

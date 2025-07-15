@@ -1,0 +1,3 @@
+CART_HOST: cart.nanda.cyou
+USER_HOST: user.nanda.cyou
+RABBITMQ_HOST: rabbitmq.nanda.cyou
