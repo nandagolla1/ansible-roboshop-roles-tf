@@ -1,1 +1,1 @@
-MONGO_HOST: mongodb.nanda.cyou
+MONGO_HOST: mongodb-{{ env }}.nanda.cyou
