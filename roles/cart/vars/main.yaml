@@ -1,2 +1,2 @@
-REDIS_HOST: redis-{{ evn }}.nanda.cyou
-CATALOGUE_HOST: catalogue.backend-{{ evn }}.nanda.cyou
+REDIS_HOST: redis-{{ env }}.nanda.cyou
+CATALOGUE_HOST: catalogue.backend-{{ env }}.nanda.cyou
