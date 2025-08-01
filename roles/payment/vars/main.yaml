@@ -1,3 +1,3 @@
-CART_HOST: cart.nanda.cyou
-USER_HOST: user.nanda.cyou
-RABBITMQ_HOST: rabbitmq.nanda.cyou
+CART_HOST: cart.backend-{{ evn }}.nanda.cyou
+USER_HOST: user.backend-{{ env }}.nanda.cyou
+RABBITMQ_HOST: rabbitmq-{{ evn }}.nanda.cyou

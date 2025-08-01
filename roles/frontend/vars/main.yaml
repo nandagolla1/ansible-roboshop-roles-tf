@@ -1,5 +1,5 @@
-CATALOGUE_HOST: catalogue.nanda.cyou
-USER_HOST: user.nanda.cyou
-CART_HOST: cart.nanda.cyou
-SHIPPING_HOST: shipping.nanda.cyou
-PAYMENT_HOST: payment.nanda.cyou
+CATALOGUE_HOST: catalogue.backend-{{ env }}.nanda.cyou
+USER_HOST: user.backend-{{ env }}.nanda.cyou
+CART_HOST: cart.backend-{{ env }}.nanda.cyou
+SHIPPING_HOST: shipping.backend-{{ env }}.nanda.cyou
+PAYMENT_HOST: payment.backend-{{ env }}.nanda.cyou
